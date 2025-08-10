@@ -11,7 +11,30 @@ interface EnhancedLandingPageProps {
   onGetStarted: () => void
 }
 
+export function EnhancedLandingPage({ onGetStarted }: EnhancedLandingPageProps) {
+  const [currentTestimonial, setCurrentTestimonial] = useState(0)
 
+  const testimonials = [
+    {
+      name: "አለማየሁ ታደሰ",
+      role: "Coffee Farmer, Jimma",
+      content:
+        "IndieCrop helped me increase my coffee yield by 40% using AI recommendations. The field agents are very helpful.",
+      rating: 5,
+    },
+    {
+      name: "Dr. Sarah Johnson",
+      role: "FAO Agricultural Specialist",
+      content:
+        "The blockchain verification and AI insights have revolutionized how we track sustainable farming practices.",
+      rating: 5,
+    },
+    {
+      name: "መሰረት በቀለ",
+      role: "Teff Farmer, Oromia",
+      content: "The mobile interface is easy to use and the crop calendar helped me plan my farming season perfectly.",
+      rating: 5,
+    },
   ]
 
   const features = [
