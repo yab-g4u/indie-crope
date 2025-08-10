@@ -1,7 +1,3 @@
-
----
-
-````markdown
 # 🌱 IndieCrop  
 **AI & Blockchain for Smarter, Trust-Based Farming in Ethiopia**  
 
@@ -146,8 +142,7 @@ npm run dev
 
 IndieCrop was developed for **Reboot the Earth 2025 – Addis Ababa Edition** and is positioned to scale globally, starting with climate-vulnerable farming regions.
 
----
 
-```
+
 
 
