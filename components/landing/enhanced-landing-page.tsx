@@ -11,30 +11,7 @@ interface EnhancedLandingPageProps {
   onGetStarted: () => void
 }
 
-export function EnhancedLandingPage({ onGetStarted }: EnhancedLandingPageProps) {
-  const [currentTestimonial, setCurrentTestimonial] = useState(0)
 
-  const testimonials = [
-    {
-      name: "አለማየሁ ታደሰ",
-      role: "Coffee Farmer, Jimma",
-      content:
-        "IndieCrop helped me increase my coffee yield by 40% using AI recommendations. The field agents are very helpful.",
-      rating: 5,
-    },
-    {
-      name: "Dr. Sarah Johnson",
-      role: "FAO Agricultural Specialist",
-      content:
-        "The blockchain verification and AI insights have revolutionized how we track sustainable farming practices.",
-      rating: 5,
-    },
-    {
-      name: "መሰረት በቀለ",
-      role: "Teff Farmer, Oromia",
-      content: "The mobile interface is easy to use and the crop calendar helped me plan my farming season perfectly.",
-      rating: 5,
-    },
   ]
 
   const features = [
@@ -142,14 +119,7 @@ export function EnhancedLandingPage({ onGetStarted }: EnhancedLandingPageProps) 
                   Start Your Journey
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-green-500/50 text-green-500 hover:bg-green-500 hover:text-black text-lg px-8 py-4 bg-transparent"
-                >
-                  <Play className="mr-2 h-5 w-5" />
-                  Watch Demo
-                </Button>
+              
               </div>
 
               <div className="flex items-center space-x-8 pt-4">
@@ -255,7 +225,7 @@ export function EnhancedLandingPage({ onGetStarted }: EnhancedLandingPageProps) 
                   <div>
                     <h3 className="font-semibold text-lg mb-2">Increased Food Security</h3>
                     <p className="text-gray-400">
-                      87% average yield improvement across all participating farms, directly contributing to household
+                      expected 87% average yield improvement across all participating farms, directly contributing to household
                       food security and income generation.
                     </p>
                   </div>
@@ -281,7 +251,7 @@ export function EnhancedLandingPage({ onGetStarted }: EnhancedLandingPageProps) 
                   <div>
                     <h3 className="font-semibold text-lg mb-2">Technology Adoption</h3>
                     <p className="text-gray-400">
-                      73% adoption rate of recommended practices through our field agent network, bridging the digital
+                      expected 73% adoption rate of recommended practices through our field agent network, bridging the digital
                       divide in rural communities.
                     </p>
                   </div>
@@ -436,14 +406,14 @@ export function EnhancedLandingPage({ onGetStarted }: EnhancedLandingPageProps) 
               <h3 className="font-semibold mb-4">Contact</h3>
               <ul className="space-y-2 text-gray-400">
                 <li>Addis Ababa, Ethiopia</li>
-                <li>info@indiecrop.com</li>
-                <li>+251 11 123 4567</li>
+                <li>g4uforlife@gmail.com</li>
+                <li></li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-green-500/20 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 IndieCrop. All rights reserved. Built for Ethiopian agricultural transformation.</p>
+            <p>&copy; 2025 IndieCrop. All rights reserved. Built for Ethiopian agricultural transformation.</p>
           </div>
         </div>
       </footer>
