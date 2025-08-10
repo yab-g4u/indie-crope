@@ -16,6 +16,58 @@ try {
   console.warn("Supabase initialization failed, demo mode will be used:", error)
 }
 
+// Email/Password authentication
+export const signInWithEmail = async (email: string, password: string) => {
+  if (!supabase) {
+    return { data: null, error: { message: "Supabase not available, using demo mode" } }
+  }
+
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
+      console.error("Email sign in error:", error)
+      return { data: null, error: { message: "Authentication failed" } }
+    }
+
+    return { data, error: null }
+  } catch (error) {
+    console.error("Email sign in error:", error)
+    return { data: null, error: { message: "Authentication failed" } }
+  }
+}
+
+export const signUpWithEmail = async (email: string, password: string, fullName: string) => {
+  if (!supabase) {
+    return { data: null, error: { message: "Supabase not available, using demo mode" } }
+  }
+
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    })
+
+    if (error) {
+      console.error("Email sign up error:", error)
+      return { data: null, error: { message: "Registration failed" } }
+    }
+
+    return { data, error: null }
+  } catch (error) {
+    console.error("Email sign up error:", error)
+    return { data: null, error: { message: "Registration failed" } }
+  }
+}
+
 // Google OAuth sign in with proper redirect and error handling
 export const signInWithGoogle = async () => {
   if (!supabase) {

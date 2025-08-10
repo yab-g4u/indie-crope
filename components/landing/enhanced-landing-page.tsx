@@ -1,385 +1,239 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { ArrowRight, Smartphone, Users, TrendingUp, Shield, Zap, Globe, CheckCircle, Star, Play } from "lucide-react"
 import Image from "next/image"
-import {
-  Users,
-  Building2,
-  Landmark,
-  Cloud,
-  Droplets,
-  TrendingUp,
-  Calendar,
-  ArrowRight,
-  CheckCircle,
-  Smartphone,
-  BarChart3,
-  Menu,
-  X,
-} from "lucide-react"
 
 interface EnhancedLandingPageProps {
   onGetStarted: () => void
 }
 
 export function EnhancedLandingPage({ onGetStarted }: EnhancedLandingPageProps) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const cursorRef = useRef<HTMLDivElement>(null)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [isHovering, setIsHovering] = useState(false)
+  const [currentTestimonial, setCurrentTestimonial] = useState(0)
 
-  // Custom cursor effect
-  useEffect(() => {
-    const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
-
-    window.addEventListener("mousemove", updateMousePosition)
-    return () => window.removeEventListener("mousemove", updateMousePosition)
-  }, [])
-
-  // Scroll reveal animation
-  useEffect(() => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "0px 0px -50px 0px",
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("revealed")
-        }
-      })
-    }, observerOptions)
-
-    const elements = document.querySelectorAll(".scroll-reveal")
-    elements.forEach((el) => observer.observe(el))
-
-    return () => observer.disconnect()
-  }, [])
-
-  // Smooth scroll function
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
-    }
-    setMobileMenuOpen(false)
-  }
+  const testimonials = [
+    {
+      name: "አለማየሁ ታደሰ",
+      role: "Coffee Farmer, Jimma",
+      content:
+        "IndieCrop helped me increase my coffee yield by 40% using AI recommendations. The field agents are very helpful.",
+      rating: 5,
+    },
+    {
+      name: "Dr. Sarah Johnson",
+      role: "FAO Agricultural Specialist",
+      content:
+        "The blockchain verification and AI insights have revolutionized how we track sustainable farming practices.",
+      rating: 5,
+    },
+    {
+      name: "መሰረት በቀለ",
+      role: "Teff Farmer, Oromia",
+      content: "The mobile interface is easy to use and the crop calendar helped me plan my farming season perfectly.",
+      rating: 5,
+    },
+  ]
 
   const features = [
     {
+      icon: Smartphone,
+      title: "Mobile-First Design",
+      description: "Optimized for smartphones with offline capabilities for rural areas",
+    },
+    {
       icon: Users,
-      title: "Field Agents",
-      description:
-        "Collect data, deliver AI-powered recommendations, and verify sustainable practices directly with farmers.",
-      image: "/images/farmers-working.jpg",
-    },
-    {
-      icon: Building2,
-      title: "NGOs & FAO",
-      description: "Monitor program effectiveness, track adoption rates, and manage verification workflows at scale.",
-      image: "/images/hands-grain.avif",
-    },
-    {
-      icon: Landmark,
-      title: "Governments",
-      description: "Access aggregated data insights to inform agricultural policies and climate adaptation strategies.",
-      image: "/images/geometric-fields.jpg",
-    },
-  ]
-
-  const cropRecommendationFeatures = [
-    {
-      icon: Cloud,
-      title: "Climate Analysis",
-      description: "AI analysis of 10-year climate data for Jimma, Ethiopia with rainfall and temperature patterns.",
-    },
-    {
-      icon: Droplets,
-      title: "Soil Assessment",
-      description: "Comprehensive soil type analysis including loamy, sandy, and clay soil recommendations.",
+      title: "Agent Network",
+      description: "Trained field agents deliver personalized recommendations directly to farmers",
     },
     {
       icon: TrendingUp,
-      title: "High-Value Crops",
-      description: "Focus on climate-resilient and high-value crops with expected profit ranges.",
+      title: "AI-Powered Insights",
+      description: "Machine learning algorithms provide crop recommendations based on local conditions",
+    },
+    {
+      icon: Shield,
+      title: "Blockchain Verification",
+      description: "Immutable records ensure transparency and trust in sustainable practices",
+    },
+    {
+      icon: Zap,
+      title: "Real-Time Analytics",
+      description: "Live dashboards for NGOs and government agencies to track program effectiveness",
+    },
+    {
+      icon: Globe,
+      title: "Climate Resilience",
+      description: "Recommendations adapted to climate change and local weather patterns",
     },
   ]
 
-  const howItWorksSteps = [
-    {
-      step: 1,
-      title: "Farm Assessment",
-      description: "Field agents collect soil type, altitude, and historical yield data.",
-      icon: Smartphone,
-    },
-    {
-      step: 2,
-      title: "AI Analysis",
-      description: "IndieCrop AI processes farm profile against 10-year Jimma climate data.",
-      icon: BarChart3,
-    },
-    {
-      step: 3,
-      title: "Smart Recommendations",
-      description: "Generate top 3 climate-resilient crops with 6-week actionable calendar.",
-      icon: Calendar,
-    },
-    {
-      step: 4,
-      title: "Verification & Impact",
-      description: "Track implementation and measure agricultural impact with blockchain verification.",
-      icon: CheckCircle,
-    },
+  const stats = [
+    { number: "10,000+", label: "Farmers Reached" },
+    { number: "87%", label: "Yield Improvement" },
+    { number: "156", label: "Field Agents" },
+    { number: "12", label: "Active Programs" },
   ]
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [testimonials.length])
 
   return (
-    <div className="min-h-screen bg-dark-primary text-dark-text-primary overflow-hidden">
-      {/* Custom Cursor */}
-      <div
-        ref={cursorRef}
-        className={`custom-cursor ${isHovering ? "hover" : ""}`}
-        style={{
-          left: `${mousePosition.x}px`,
-          top: `${mousePosition.y}px`,
-        }}
-      />
-
+    <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 glass-effect border-b border-dark-accent/20">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div
-              className="flex items-center space-x-3 cursor-pointer"
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
-            >
-              <div className="h-8 w-8 relative">
-                <Image
-                  src="/images/indiecrop-logo.png"
-                  alt="IndieCrop Logo"
-                  width={32}
-                  height={32}
-                  className="animate-glow"
-                />
-              </div>
-              <span className="text-xl font-bold text-dark-accent">IndieCrop</span>
+      <nav className="border-b border-green-500/20 bg-black/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="h-8 w-8 relative">
+              <Image src="/images/indiecrop-logo.png" alt="IndieCrop Logo" width={32} height={32} />
             </div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              <button
-                onClick={() => scrollToSection("home")}
-                className="text-dark-text-secondary hover:text-dark-accent transition-colors duration-300 cursor-pointer"
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                Home
-              </button>
-              <button
-                onClick={() => scrollToSection("features")}
-                className="text-dark-text-secondary hover:text-dark-accent transition-colors duration-300 cursor-pointer"
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                Features
-              </button>
-              <button
-                onClick={() => scrollToSection("how-it-works")}
-                className="text-dark-text-secondary hover:text-dark-accent transition-colors duration-300 cursor-pointer"
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                How it Works
-              </button>
-              <Button
-                onClick={onGetStarted}
-                className="neon-gradient hover:glow-effect transition-all duration-300 cursor-pointer"
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                Get Started
-              </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="h-9 w-9 text-dark-accent"
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
-            </div>
+            <span className="text-xl font-bold">IndieCrop</span>
           </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-dark-accent/20 animate-slide-in">
-              <div className="flex flex-col space-y-4">
-                <button
-                  onClick={() => scrollToSection("home")}
-                  className="text-dark-text-secondary hover:text-dark-accent transition-colors cursor-pointer text-left"
-                  onMouseEnter={() => setIsHovering(true)}
-                  onMouseLeave={() => setIsHovering(false)}
-                >
-                  Home
-                </button>
-                <button
-                  onClick={() => scrollToSection("features")}
-                  className="text-dark-text-secondary hover:text-dark-accent transition-colors cursor-pointer text-left"
-                  onMouseEnter={() => setIsHovering(true)}
-                  onMouseLeave={() => setIsHovering(false)}
-                >
-                  Features
-                </button>
-                <button
-                  onClick={() => scrollToSection("how-it-works")}
-                  className="text-dark-text-secondary hover:text-dark-accent transition-colors cursor-pointer text-left"
-                  onMouseEnter={() => setIsHovering(true)}
-                  onMouseLeave={() => setIsHovering(false)}
-                >
-                  How it Works
-                </button>
-                <Button
-                  onClick={onGetStarted}
-                  className="neon-gradient w-full cursor-pointer"
-                  onMouseEnter={() => setIsHovering(true)}
-                  onMouseLeave={() => setIsHovering(false)}
-                >
-                  Get Started
-                </Button>
-              </div>
-            </div>
-          )}
+          <div className="hidden md:flex items-center space-x-6">
+            <a href="#features" className="text-gray-400 hover:text-green-500 transition-colors">
+              Features
+            </a>
+            <a href="#impact" className="text-gray-400 hover:text-green-500 transition-colors">
+              Impact
+            </a>
+            <a href="#testimonials" className="text-gray-400 hover:text-green-500 transition-colors">
+              Stories
+            </a>
+            <Button onClick={onGetStarted} className="bg-green-500 hover:bg-green-600 text-black">
+              Get Started
+            </Button>
+          </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section
-        id="home"
-        className="relative min-h-screen flex items-center justify-center agri-overlay"
-        style={{
-          backgroundImage: `url('/images/rice-fields.jpg')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundAttachment: "fixed",
-        }}
-      >
-        <div className="container mx-auto px-4 text-center animate-fade-in">
-          <Badge
-            variant="secondary"
-            className="mb-6 bg-dark-accent/20 text-dark-accent border-dark-accent/30 animate-float"
-          >
-            🌾 Smart Agriculture for Ethiopian Farmers
-          </Badge>
-          <h1 className="text-4xl md:text-7xl font-bold mb-6 scroll-reveal">
-            <span className="bg-gradient-to-r from-dark-accent to-dark-accent-soft bg-clip-text text-transparent">
-              Climate-Resilient Crops
-            </span>
-            <br />
-            <span className="text-dark-text-primary">for Ethiopian Farmers</span>
-          </h1>
-          <p className="text-xl text-dark-text-secondary mb-8 max-w-3xl mx-auto scroll-reveal">
-            IndieCrop analyzes 10-year climate data and farm profiles to recommend high-value, climate-resilient crops
-            specifically for Jimma region with actionable 6-week calendars.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center scroll-reveal">
-            <Button
-              onClick={onGetStarted}
-              size="lg"
-              className="neon-gradient text-lg px-8 hover:glow-effect transition-all duration-300 cursor-pointer"
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
-            >
-              Get Started
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+                  🌱 Transforming Ethiopian Agriculture
+                </Badge>
+                <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                  AI-Powered
+                  <span className="text-green-500"> Crop Recommendations</span>
+                  for Sustainable Farming
+                </h1>
+                <p className="text-xl text-gray-400 leading-relaxed">
+                  Empowering Ethiopian farmers with personalized agricultural guidance, blockchain verification, and
+                  climate-resilient crop recommendations delivered through trained field agents.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  onClick={onGetStarted}
+                  size="lg"
+                  className="bg-green-500 hover:bg-green-600 text-black text-lg px-8 py-4"
+                >
+                  Start Your Journey
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-green-500/50 text-green-500 hover:bg-green-500 hover:text-black text-lg px-8 py-4 bg-transparent"
+                >
+                  <Play className="mr-2 h-5 w-5" />
+                  Watch Demo
+                </Button>
+              </div>
+
+              <div className="flex items-center space-x-8 pt-4">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <span className="text-gray-400">Free for Farmers</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <span className="text-gray-400">Offline Capable</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <span className="text-gray-400">Local Language</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="relative z-10">
+                <Image
+                  src="/images/farmers-working.jpg"
+                  alt="Ethiopian farmers using IndieCrop"
+                  width={600}
+                  height={400}
+                  className="rounded-2xl shadow-2xl"
+                />
+                <div className="absolute -bottom-6 -left-6 bg-black/80 backdrop-blur-md rounded-xl p-4 border border-green-500/20">
+                  <div className="flex items-center space-x-3">
+                    <div className="h-12 w-12 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <TrendingUp className="h-6 w-6 text-green-500" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">87% Yield Increase</p>
+                      <p className="text-sm text-gray-400">Average improvement</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-tr from-green-500/20 to-transparent rounded-2xl"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 bg-gray-900/50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-4xl font-bold text-green-500 mb-2">{stat.number}</div>
+                <div className="text-gray-400">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-4 bg-dark-secondary">
-        <div className="container mx-auto">
-          <div className="text-center mb-16 scroll-reveal">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-dark-text-primary">
-              Built for Ethiopian Agriculture
-            </h2>
-            <p className="text-xl text-dark-text-secondary max-w-2xl mx-auto">
-              Specialized solutions for field agents, organizations, and policymakers in Ethiopia's agricultural
-              ecosystem.
+      <section id="features" className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4">Comprehensive Agricultural Platform</h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              From AI-powered recommendations to blockchain verification, IndieCrop provides everything needed for
+              sustainable farming success.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="bg-dark-secondary border-dark-accent/20 hover:border-dark-accent/50 transition-all duration-300 hover:glow-effect scroll-reveal cursor-pointer group"
-                style={{ animationDelay: `${index * 0.2}s` }}
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
+                className="bg-gray-900 border-green-500/20 hover:border-green-500/50 transition-all duration-300"
               >
-                <div
-                  className="h-48 bg-cover bg-center rounded-t-lg agri-overlay"
-                  style={{ backgroundImage: `url('${feature.image}')` }}
-                >
-                  <div className="h-full flex items-center justify-center">
-                    <div className="h-16 w-16 rounded-full bg-dark-accent/20 backdrop-blur-md flex items-center justify-center group-hover:bg-dark-accent/30 transition-all duration-300">
-                      <feature.icon className="h-8 w-8 text-dark-accent" />
-                    </div>
-                  </div>
-                </div>
                 <CardHeader>
-                  <CardTitle className="text-xl text-dark-text-primary">{feature.title}</CardTitle>
+                  <div className="h-12 w-12 rounded-full bg-green-500/20 flex items-center justify-center mb-4">
+                    <feature.icon className="h-6 w-6 text-green-500" />
+                  </div>
+                  <CardTitle className="text-white">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-base text-dark-text-secondary">
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Crop Recommendation Features */}
-          <div className="text-center mb-12 scroll-reveal">
-            <h3 className="text-2xl md:text-4xl font-bold mb-4 text-dark-text-primary">AI-Powered Crop Intelligence</h3>
-            <p className="text-lg text-dark-text-secondary">
-              IndieCrop analyzes three critical factors for optimal crop selection in Jimma
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {cropRecommendationFeatures.map((feature, index) => (
-              <Card
-                key={index}
-                className="bg-dark-secondary border-dark-accent/20 hover:border-dark-accent/50 transition-all duration-300 scroll-reveal cursor-pointer"
-                style={{ animationDelay: `${index * 0.1}s` }}
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="h-12 w-12 rounded-lg bg-dark-accent/20 flex items-center justify-center flex-shrink-0">
-                      <feature.icon className="h-6 w-6 text-dark-accent" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-lg mb-2 text-dark-text-primary">{feature.title}</h4>
-                      <p className="text-dark-text-secondary">{feature.description}</p>
-                    </div>
-                  </div>
+                  <CardDescription className="text-gray-400">{feature.description}</CardDescription>
                 </CardContent>
               </Card>
             ))}
@@ -387,90 +241,210 @@ export function EnhancedLandingPage({ onGetStarted }: EnhancedLandingPageProps) 
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section
-        id="how-it-works"
-        className="py-20 px-4 relative agri-overlay"
-        style={{
-          backgroundImage: `url('/images/terraced-fields.jpg')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundAttachment: "fixed",
-        }}
-      >
-        <div className="container mx-auto">
-          <div className="text-center mb-16 scroll-reveal">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-dark-text-primary">How IndieCrop Works</h2>
-            <p className="text-xl text-dark-text-secondary max-w-2xl mx-auto">
-              From farm assessment to actionable insights in four simple steps
-            </p>
+      {/* Impact Section */}
+      <section id="impact" className="py-20 bg-gray-900/30">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-4xl font-bold mb-6">Measurable Impact Across Ethiopia</h2>
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-2">Increased Food Security</h3>
+                    <p className="text-gray-400">
+                      87% average yield improvement across all participating farms, directly contributing to household
+                      food security and income generation.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className="h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-2">Climate Adaptation</h3>
+                    <p className="text-gray-400">
+                      Climate-resilient crop varieties recommended based on local weather patterns and climate change
+                      projections for long-term sustainability.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className="h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-2">Technology Adoption</h3>
+                    <p className="text-gray-400">
+                      73% adoption rate of recommended practices through our field agent network, bridging the digital
+                      divide in rural communities.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative">
+              <Image
+                src="/images/terraced-fields.jpg"
+                alt="Sustainable farming practices"
+                width={600}
+                height={400}
+                className="rounded-2xl shadow-2xl"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4">Stories from the Field</h2>
+            <p className="text-xl text-gray-400">Hear from farmers, field agents, and organizations using IndieCrop</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {howItWorksSteps.map((step, index) => (
-              <div
-                key={index}
-                className="text-center scroll-reveal cursor-pointer"
-                style={{ animationDelay: `${index * 0.2}s` }}
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                <div className="relative mb-6">
-                  <div className="h-16 w-16 rounded-full bg-dark-accent text-dark-primary flex items-center justify-center mx-auto mb-4 text-xl font-bold animate-glow">
-                    {step.step}
+          <div className="max-w-4xl mx-auto">
+            <Card className="bg-gray-900 border-green-500/20">
+              <CardContent className="p-8">
+                <div className="text-center">
+                  <div className="flex justify-center mb-4">
+                    {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 text-yellow-500 fill-current" />
+                    ))}
                   </div>
-                  <div className="h-12 w-12 rounded-lg bg-dark-secondary/80 backdrop-blur-md border border-dark-accent/20 flex items-center justify-center mx-auto">
-                    <step.icon className="h-6 w-6 text-dark-accent" />
+                  <blockquote className="text-xl text-gray-300 mb-6 italic">
+                    "{testimonials[currentTestimonial].content}"
+                  </blockquote>
+                  <div>
+                    <div className="font-semibold text-white">{testimonials[currentTestimonial].name}</div>
+                    <div className="text-gray-400">{testimonials[currentTestimonial].role}</div>
                   </div>
-                  {index < howItWorksSteps.length - 1 && (
-                    <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-dark-accent/30 -translate-y-1/2" />
-                  )}
                 </div>
-                <h3 className="text-lg font-semibold mb-2 text-dark-text-primary">{step.title}</h3>
-                <p className="text-dark-text-secondary text-sm">{step.description}</p>
-              </div>
-            ))}
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-center mt-6 space-x-2">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentTestimonial(index)}
+                  className={`h-2 w-2 rounded-full transition-colors ${
+                    index === currentTestimonial ? "bg-green-500" : "bg-gray-600"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 neon-gradient">
-        <div className="container mx-auto text-center scroll-reveal">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-dark-primary">
-            Ready to Transform Ethiopian Agriculture?
-          </h2>
-          <p className="text-xl mb-8 text-dark-primary/80 max-w-2xl mx-auto">
-            Join field agents and agricultural organizations using IndieCrop to make data-driven farming decisions in
-            Jimma and beyond.
+      <section className="py-20 bg-gradient-to-r from-green-500/10 to-transparent">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-bold mb-6">Ready to Transform Your Agricultural Impact?</h2>
+          <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+            Join thousands of farmers, field agents, and organizations already using IndieCrop to create sustainable
+            agricultural change across Ethiopia.
           </p>
           <Button
             onClick={onGetStarted}
             size="lg"
-            variant="secondary"
-            className="text-lg px-8 bg-dark-primary text-dark-accent hover:bg-dark-secondary transition-all duration-300 cursor-pointer"
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
+            className="bg-green-500 hover:bg-green-600 text-black text-lg px-12 py-4"
           >
-            Start Your Journey
+            Get Started Today
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-dark-primary border-t border-dark-accent/20">
-        <div className="container mx-auto text-center">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <div className="h-8 w-8 relative">
-              <Image src="/images/indiecrop-logo.png" alt="IndieCrop Logo" width={32} height={32} />
+      <footer className="border-t border-green-500/20 py-12 bg-gray-900/50">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="h-8 w-8 relative">
+                  <Image src="/images/indiecrop-logo.png" alt="IndieCrop Logo" width={32} height={32} />
+                </div>
+                <span className="text-xl font-bold">IndieCrop</span>
+              </div>
+              <p className="text-gray-400">
+                Empowering Ethiopian agriculture through AI-powered recommendations and sustainable practices.
+              </p>
             </div>
-            <span className="text-xl font-bold text-dark-accent">IndieCrop</span>
+
+            <div>
+              <h3 className="font-semibold mb-4">Platform</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <a href="#" className="hover:text-green-500 transition-colors">
+                    Field Agents
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-green-500 transition-colors">
+                    NGO Dashboard
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-green-500 transition-colors">
+                    Government Portal
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-green-500 transition-colors">
+                    Farmer Interface
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-4">Resources</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <a href="#" className="hover:text-green-500 transition-colors">
+                    Documentation
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-green-500 transition-colors">
+                    Training Materials
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-green-500 transition-colors">
+                    API Reference
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-green-500 transition-colors">
+                    Support
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-4">Contact</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>Addis Ababa, Ethiopia</li>
+                <li>info@indiecrop.com</li>
+                <li>+251 11 123 4567</li>
+              </ul>
+            </div>
           </div>
-          <p className="text-dark-text-secondary mb-4">
-            Empowering Ethiopian agriculture through AI-driven climate insights
-          </p>
-          <p className="text-sm text-dark-text-secondary/60">© 2024 IndieCrop. Built for agricultural innovation.</p>
+
+          <div className="border-t border-green-500/20 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2024 IndieCrop. All rights reserved. Built for Ethiopian agricultural transformation.</p>
+          </div>
         </div>
       </footer>
     </div>
