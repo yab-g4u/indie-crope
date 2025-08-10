@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "AgroLedger+ | Smart Agriculture Platform",
+  title: "indiecrop | Smart Agriculture Platform",
   description: "Agent-first crop recommendation & sustainability verification platform",
   manifest: "/manifest.json",
   themeColor: [
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     { media: "(prefers-color-scheme: dark)", color: "#1d431d" },
   ],
   viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
-    generator: 'v0.dev'
+    generator: ''
 }
 
 export default function RootLayout({
