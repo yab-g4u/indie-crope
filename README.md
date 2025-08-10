@@ -114,19 +114,19 @@ npm run dev
 
 ### **Landing Page**
 
-[![Landing Page](public/screenshots/landing.png)](public/screenshots/home.png)
+[![Landing Page](public/screenshots/home.png)](public/screenshots/home.png)
 
 ### **Field Agent Dashboard**
 
-[![Field Agent Dashboard](public/screenshots/field-agent.png)](public/screenshots/map.png)
+[![Field Agent Dashboard](public/screenshots/map.png)](public/screenshots/map.png)
 
 ### **NGO / FAO Dashboard**
 
-[![NGO Dashboard](public/screenshots/ngo.png)](public/screenshots/NGO.png)
+[![NGO Dashboard](public/screenshots/NGO.png)](public/screenshots/NGO.png)
 
 ### **Government Dashboard**
 
-[![Government Dashboard](public/screenshots/gov.png)](public/screenshots/government.png)
+[![Government Dashboard](public/screenshots/government.png)](public/screenshots/government.png)
 
 ---
 
