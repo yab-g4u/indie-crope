@@ -1,30 +1,153 @@
-# indiecrop
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+---
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/yeabserasisay-aastustudents-projects/v0-indiecrop)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/oUl6DpQ4mGX)
+````markdown
+# 🌱 IndieCrop  
+**AI & Blockchain for Smarter, Trust-Based Farming in Ethiopia**  
 
-## Overview
+---
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+## 📖 Overview  
+IndieCrop is a **multi-role Progressive Web App** that transforms Ethiopian agriculture through:  
+- **AI-powered crop recommendations**  
+- **Blockchain-backed farm verification**  
+- **Data-driven policy insights**  
 
-## Deployment
+It connects **Field Agents**, **NGOs/FAO**, and **Government agencies**, enabling **smarter decisions**, **verified sustainability progress**, and **scalable agricultural development**.  
 
-Your project is live at:
+---
 
-**[https://vercel.com/yeabserasisay-aastustudents-projects/v0-indiecrop](https://vercel.com/yeabserasisay-aastustudents-projects/v0-indiecrop)**
+## 🎯 Mission  
+Empowering agricultural stakeholders to:  
+- **Decide Better** – Make informed crop choices using climate, soil, and market data.  
+- **Prove Progress** – Maintain tamper-proof records of farm activities and sustainability actions.  
+- **Scale Impact** – Provide governments and NGOs with reliable insights for funding and planning.  
 
-## Build your app
+---
 
-Continue building your app on:
+## 👥 Roles & Functionalities  
 
-**[https://v0.dev/chat/projects/oUl6DpQ4mGX](https://v0.dev/chat/projects/oUl6DpQ4mGX)**
+### **1. Field Agent**  
+*Collect farm data, deliver recommendations, and verify sustainable practices.*  
+- 📍 **Data Collection** – Location, soil type, water usage, yield history.  
+- ✅ **Farm Verification** – GPS capture, field surveys.  
+- 🤖 **AI-Driven Recommendations** – Top-3 crops ranked by profitability & climate resilience.  
+- 📊 **Progress Tracking** – Monitor seasonal adoption and performance.  
 
-## How It Works
+**Access:** Field Agent Dashboard  
 
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+---
+
+### **2. NGO / FAO**  
+*Monitor programs, track adoption rates, and manage verification workflows.*  
+- 📈 **Program Monitoring** – Real-time adoption metrics.  
+- 📊 **Impact Analytics** – Yield improvement, sustainability scores.  
+- 💡 **AI Assistant** – Identify farms needing targeted support.  
+- 🤝 **Farmer Engagement Tools** – Resource sharing and follow-up.  
+
+**Access:** NGO / FAO Dashboard  
+
+---
+
+### **3. Government**  
+*Leverage aggregated insights to inform agricultural policies and strategies.*  
+- 📜 **Policy Insights** – Data-backed recommendations for subsidies & climate adaptation.  
+- 🗺 **Regional Analytics** – Compare performance across kebeles, woredas, and regions.  
+- 🔗 **Blockchain Registry** – Immutable sustainability records.  
+- 📤 **Export Data** – Generate reports for decision-making.  
+
+**Access:** Government Dashboard  
+
+---
+
+## 🛠️ Tech Stack  
+
+**Frontend**  
+- Next.js + React  
+- Tailwind CSS + shadcn/ui  
+- Leaflet.js with MapTiler vector tiles  
+
+**Backend & Authentication**  
+- Supabase (Auth, Database, Storage)  
+
+**AI Features**  
+- Google Gemini API for crop recommendations  
+
+**PWA Features**  
+- Mobile-first, offline-ready architecture  
+- GPS location capture  
+- Low-bandwidth optimizations  
+
+---
+
+
+
+---
+
+
+---
+
+## ⚙️ Installation
+
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/yab-g4u/indie-crope.git
+cd indie-crope
+```
+
+2. **Install dependencies**
+
+```bash
+npm install
+```
+
+3. **Set environment variables**
+   Create a `.env.local` file and add your keys.
+
+4. **Run development server**
+
+```bash
+npm run dev
+```
+
+
+---
+
+## 📸 Screenshots
+
+### **Landing Page**
+
+[![Landing Page](public/screenshots/landing.png)](public/screenshots/landing.png)
+
+### **Field Agent Dashboard**
+
+[![Field Agent Dashboard](public/screenshots/field-agent.png)](public/screenshots/field-agent.png)
+
+### **NGO / FAO Dashboard**
+
+[![NGO Dashboard](public/screenshots/ngo.png)](public/screenshots/ngo.png)
+
+### **Government Dashboard**
+
+[![Government Dashboard](public/screenshots/gov.png)](public/screenshots/gov.png)
+
+---
+
+## 📈 Impact & Scalability
+
+**Phase 1** – Pilot in kebeles with live crop recommendation engine.
+**Phase 2** – Integrate market price prediction & pest alert systems.
+**Phase 3** – Expand to multiple regions, add AI voice assistant for rural adoption.
+
+---
+
+## 🏆 Reboot the Earth 2025 – Addis Ababa Edition*
+
+IndieCrop was developed for **Reboot the Earth 2025 – Addis Ababa Edition** and is positioned to scale globally, starting with climate-vulnerable farming regions.
+
+---
+
+```
+
+
