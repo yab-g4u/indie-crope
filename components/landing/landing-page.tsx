@@ -255,7 +255,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
       <section id="how-it-works" className="py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">How AgroLedger+ Works</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">How indiecrop+ Works</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               From data collection to actionable insights in four simple steps
             </p>
@@ -288,7 +288,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Transform Agriculture?</h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join thousands of field agents, NGOs, and government agencies using AgroLedger+ to make data-driven
+            we want to Join thousands of field agents, NGOs, and government agencies using indiecrop to make data-driven
             agricultural decisions.
           </p>
           <Button onClick={onGetStarted} size="lg" variant="secondary" className="text-lg px-8">
@@ -305,10 +305,10 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             <div className="h-8 w-8 rounded-full bg-agri-500 flex items-center justify-center">
               <Sprout className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold">AgroLedger+</span>
+            <span className="text-xl font-bold">indicrop</span>
           </div>
           <p className="text-gray-400 mb-4">Empowering sustainable agriculture through AI-driven insights</p>
-          <p className="text-sm text-gray-500">© 2024 AgroLedger+. Built for agricultural innovation.</p>
+          <p className="text-sm text-gray-500">© 2025 indiecrop+. Built for agricultural innovation.</p>
         </div>
       </footer>
     </div>

@@ -71,10 +71,10 @@ export function EnhancedLandingPage({ onGetStarted }: EnhancedLandingPageProps) 
   ]
 
   const stats = [
-    { number: "10,000+", label: "Farmers Reached" },
-    { number: "87%", label: "Yield Improvement" },
-    { number: "156", label: "Field Agents" },
-    { number: "12", label: "Active Programs" },
+    { number: "expected 10,000+", label: "Farmers Reached" },
+    { number: "expected 87%", label: "Yield Improvement" },
+    { number: "expected 156", label: "Field Agents" },
+    { number: "expected 12", label: "Active Programs" },
   ]
 
   useEffect(() => {
