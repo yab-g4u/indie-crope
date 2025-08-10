@@ -1,28 +1,12 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Textarea } from "@/components/ui/textarea"
-import {
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Moon,
-  Sun,
-  MessageCircle,
-  Send,
-  X,
-  Leaf,
-  Clock,
-  AlertCircle,
-} from "lucide-react"
-import { useTheme } from "next-themes"
+import { Input } from "@/components/ui/input"
+import { Search, ArrowLeft, ChevronLeft, ChevronRight, Download, Share } from "lucide-react"
+import Image from "next/image"
 
 interface CalendarTask {
   task_id: string
@@ -30,369 +14,310 @@ interface CalendarTask {
   date_from: string
   date_to: string
   rationale: string
-  priority?: "high" | "medium" | "low"
-  category?: "planting" | "irrigation" | "fertilizer" | "harvest" | "maintenance"
+  category: string
+  priority: string
 }
 
-interface CropCalendarData {
-  top_crops: Array<{
-    name: string
-    expected_profit_min: number
-    expected_profit_max: number
-    resilience_score: number
-  }>
+interface CropRecommendation {
+  name: string
+  expected_profit_min: number
+  expected_profit_max: number
+  resilience_score: number
+}
+
+interface CalendarData {
+  top_crops: CropRecommendation[]
   calendar: CalendarTask[]
   confidence: number
 }
 
-interface ChatMessage {
-  id: string
-  role: "user" | "assistant"
-  content: string
-  timestamp: Date
-}
-
 interface InteractiveCropCalendarProps {
-  calendarData: CropCalendarData
+  calendarData: CalendarData
   farmProfile?: any
+  onBack?: () => void
 }
 
-export function InteractiveCropCalendar({ calendarData, farmProfile }: InteractiveCropCalendarProps) {
-  const [currentWeek, setCurrentWeek] = useState(new Date())
+export function InteractiveCropCalendar({ calendarData, farmProfile, onBack }: InteractiveCropCalendarProps) {
+  const [searchTerm, setSearchTerm] = useState("")
   const [selectedTask, setSelectedTask] = useState<CalendarTask | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [filteredTasks, setFilteredTasks] = useState<CalendarTask[]>(calendarData.calendar)
-  const [isChatOpen, setIsChatOpen] = useState(false)
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    {
-      id: "welcome",
-      role: "assistant",
-      content: "Hi! I'm your AI farming assistant. Ask me anything about your crop calendar, tasks, or farming advice!",
-      timestamp: new Date(),
-    },
-  ])
-  const [chatInput, setChatInput] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const { theme, setTheme } = useTheme()
-  const chatScrollRef = useRef<HTMLDivElement>(null)
+  const [currentWeek, setCurrentWeek] = useState(0)
 
-  // Get week dates
-  const getWeekDates = (date: Date) => {
-    const week = []
-    const startOfWeek = new Date(date)
-    startOfWeek.setDate(date.getDate() - date.getDay())
+  // Generate calendar weeks
+  const generateWeeks = () => {
+    const startDate = new Date("2024-08-10")
+    const weeks = []
 
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(startOfWeek)
-      day.setDate(startOfWeek.getDate() + i)
-      week.push(day)
+    for (let i = 0; i < 8; i++) {
+      const weekStart = new Date(startDate)
+      weekStart.setDate(startDate.getDate() + i * 7)
+      const weekEnd = new Date(weekStart)
+      weekEnd.setDate(weekStart.getDate() + 6)
+
+      weeks.push({
+        start: weekStart,
+        end: weekEnd,
+        tasks: calendarData.calendar.filter((task) => {
+          const taskStart = new Date(task.date_from)
+          return taskStart >= weekStart && taskStart <= weekEnd
+        }),
+      })
     }
-    return week
+
+    return weeks
   }
 
-  const weekDates = getWeekDates(currentWeek)
+  const weeks = generateWeeks()
+  const currentWeekData = weeks[currentWeek]
 
-  // Filter tasks based on search
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setFilteredTasks(calendarData.calendar)
-    } else {
-      const filtered = calendarData.calendar.filter(
-        (task) =>
-          task.task.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          task.rationale.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-      setFilteredTasks(filtered)
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "planting":
+        return "bg-green-500/20 text-green-400 border-green-500/30"
+      case "maintenance":
+        return "bg-blue-500/20 text-blue-400 border-blue-500/30"
+      case "harvesting":
+        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+      case "pest_control":
+        return "bg-red-500/20 text-red-400 border-red-500/30"
+      default:
+        return "bg-gray-500/20 text-gray-400 border-gray-500/30"
     }
-  }, [searchQuery, calendarData.calendar])
+  }
 
-  // Get tasks for a specific date
-  const getTasksForDate = (date: Date) => {
-    const dateStr = date.toISOString().split("T")[0]
-    return filteredTasks.filter((task) => {
-      const taskStart = new Date(task.date_from)
-      const taskEnd = new Date(task.date_to)
-      const currentDate = new Date(dateStr)
-      return currentDate >= taskStart && currentDate <= taskEnd
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return "bg-red-500"
+      case "medium":
+        return "bg-yellow-500"
+      case "low":
+        return "bg-green-500"
+      default:
+        return "bg-gray-500"
+    }
+  }
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
     })
   }
 
-  // Task category colors
-  const getTaskColor = (category: string) => {
-    switch (category) {
-      case "planting":
-        return "bg-green-500 hover:bg-green-600"
-      case "irrigation":
-        return "bg-blue-500 hover:bg-blue-600"
-      case "fertilizer":
-        return "bg-yellow-500 hover:bg-yellow-600"
-      case "harvest":
-        return "bg-orange-500 hover:bg-orange-600"
-      case "maintenance":
-        return "bg-purple-500 hover:bg-purple-600"
-      default:
-        return "bg-gray-500 hover:bg-gray-600"
-    }
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "ETB",
+      minimumFractionDigits: 0,
+    }).format(amount)
   }
-
-  // Navigation
-  const navigateWeek = (direction: "prev" | "next") => {
-    const newWeek = new Date(currentWeek)
-    newWeek.setDate(currentWeek.getDate() + (direction === "next" ? 7 : -7))
-    setCurrentWeek(newWeek)
-  }
-
-  // Chat functionality
-  const handleSendMessage = async () => {
-    if (!chatInput.trim()) return
-
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      role: "user",
-      content: chatInput,
-      timestamp: new Date(),
-    }
-
-    setChatMessages((prev) => [...prev, userMessage])
-    setChatInput("")
-    setIsLoading(true)
-
-    try {
-      // Simulate AI response (in real app, call your AI API)
-      const response = await generateAIResponse(chatInput, calendarData, farmProfile)
-      const assistantMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: response,
-        timestamp: new Date(),
-      }
-
-      setChatMessages((prev) => [...prev, assistantMessage])
-    } catch (error) {
-      const errorMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: "I'm sorry, I'm having trouble responding right now. Please try again later.",
-        timestamp: new Date(),
-      }
-      setChatMessages((prev) => [...prev, errorMessage])
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  // Scroll chat to bottom
-  useEffect(() => {
-    if (chatScrollRef.current) {
-      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight
-    }
-  }, [chatMessages])
 
   return (
-    <div className="min-h-screen bg-background p-4 space-y-6">
+    <div className="min-h-screen bg-black" style={{ cursor: "default" }}>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center space-x-2">
-            <Calendar className="h-8 w-8 text-green-500" />
-            <span>Crop Calendar</span>
-          </h1>
-          <p className="text-muted-foreground">AI-powered farming schedule for optimal yields</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="icon" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
-            {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-          </Button>
-          <Badge className="bg-green-500 text-white">AI Confidence: {Math.round(calendarData.confidence * 100)}%</Badge>
-        </div>
-      </div>
-
-      {/* Search and Navigation */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search tasks..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="icon" onClick={() => navigateWeek("prev")}>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <div className="text-sm font-medium min-w-[200px] text-center">
-            {weekDates[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })} -{" "}
-            {weekDates[6].toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-          </div>
-          <Button variant="outline" size="icon" onClick={() => navigateWeek("next")}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Calendar Grid */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Weekly View</CardTitle>
-          <CardDescription>Click on tasks to view detailed information and rationale</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-7 gap-2 mb-4">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div key={day} className="text-center font-medium text-sm text-muted-foreground p-2">
-                {day}
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-7 gap-2 min-h-[400px]">
-            {weekDates.map((date, index) => {
-              const tasks = getTasksForDate(date)
-              const isToday = date.toDateString() === new Date().toDateString()
-
-              return (
-                <div
-                  key={index}
-                  className={`border rounded-lg p-2 min-h-[120px] ${
-                    isToday ? "bg-green-50 dark:bg-green-950 border-green-500" : "bg-card"
-                  }`}
-                >
-                  <div className={`text-sm font-medium mb-2 ${isToday ? "text-green-600" : ""}`}>{date.getDate()}</div>
-                  <div className="space-y-1">
-                    {tasks.map((task) => (
-                      <button
-                        key={task.task_id}
-                        onClick={() => setSelectedTask(task)}
-                        className={`w-full text-left p-1 rounded text-xs text-white transition-all duration-200 hover:scale-105 ${getTaskColor(
-                          task.category || "maintenance",
-                        )}`}
-                        aria-label={`Task: ${task.task}`}
-                      >
-                        <div className="truncate font-medium">{task.task}</div>
-                        {task.priority === "high" && <AlertCircle className="h-3 w-3 inline-block ml-1" />}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Task Detail Modal */}
-      <Dialog open={!!selectedTask} onOpenChange={() => setSelectedTask(null)}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center space-x-2">
-              <Leaf className="h-5 w-5 text-green-500" />
-              <span>{selectedTask?.task}</span>
-            </DialogTitle>
-            <DialogDescription>
-              {selectedTask?.date_from} to {selectedTask?.date_to}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Clock className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">
-                Duration:{" "}
-                {selectedTask &&
-                  Math.ceil(
-                    (new Date(selectedTask.date_to).getTime() - new Date(selectedTask.date_from).getTime()) /
-                      (1000 * 60 * 60 * 24),
-                  )}{" "}
-                days
-              </span>
+      <header className="border-b bg-black/80 backdrop-blur-md sticky top-0 z-50 border-green-500/20">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            {onBack && (
+              <Button onClick={onBack} variant="ghost" className="text-green-500 hover:text-green-400 mr-2">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            )}
+            <div className="h-8 w-8 relative">
+              <Image src="/images/indiecrop-logo.png" alt="IndieCrop Logo" width={32} height={32} />
             </div>
             <div>
-              <h4 className="font-medium mb-2">Why this task is important:</h4>
-              <p className="text-sm text-muted-foreground bg-muted p-3 rounded-lg">{selectedTask?.rationale}</p>
-            </div>
-            <div className="flex space-x-2">
-              <Button size="sm" className="flex-1">
-                Mark Complete
-              </Button>
-              <Button size="sm" variant="outline" className="flex-1 bg-transparent">
-                Set Reminder
-              </Button>
+              <h1 className="font-bold text-lg text-white">Crop Calendar</h1>
+              <p className="text-sm text-gray-400">AI-powered farming schedule for optimal yields</p>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+          <div className="flex items-center space-x-2">
+            <Badge className="bg-green-500/20 text-green-400">
+              AI Confidence: {Math.round(calendarData.confidence * 100)}%
+            </Badge>
+          </div>
+        </div>
+      </header>
 
-      {/* AI Chat Widget */}
-      <div className="fixed bottom-4 right-4 z-50">
-        {!isChatOpen ? (
-          <Button
-            onClick={() => setIsChatOpen(true)}
-            size="lg"
-            className="rounded-full h-14 w-14 bg-green-500 hover:bg-green-600 shadow-lg"
-          >
-            <MessageCircle className="h-6 w-6" />
-          </Button>
-        ) : (
-          <Card className="w-80 h-96 shadow-xl">
-            <CardHeader className="pb-2">
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        {/* Top Crops Recommendations */}
+        <Card className="bg-gray-900 border-green-500/20">
+          <CardHeader>
+            <CardTitle className="text-white">Recommended Crops</CardTitle>
+            <CardDescription className="text-gray-400">Based on your farm profile and local conditions</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {calendarData.top_crops.map((crop, index) => (
+                <div key={index} className="bg-gray-800 rounded-lg p-4 border border-green-500/20">
+                  <h3 className="font-semibold text-white mb-2">{crop.name}</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Expected Profit:</span>
+                      <span className="text-green-400">
+                        {formatCurrency(crop.expected_profit_min)} - {formatCurrency(crop.expected_profit_max)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Resilience Score:</span>
+                      <span className="text-white">{Math.round(crop.resilience_score * 100)}%</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Search and Controls */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search tasks..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-gray-800 border-green-500/30 text-white placeholder-gray-400"
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              className="bg-transparent border-green-500/50 text-green-500 hover:bg-green-500 hover:text-black"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export
+            </Button>
+            <Button
+              variant="outline"
+              className="bg-transparent border-green-500/50 text-green-500 hover:bg-green-500 hover:text-black"
+            >
+              <Share className="mr-2 h-4 w-4" />
+              Share
+            </Button>
+          </div>
+        </div>
+
+        {/* Weekly View */}
+        <Card className="bg-gray-900 border-green-500/20">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-white">Weekly View</CardTitle>
+                <CardDescription className="text-gray-400">
+                  Click on tasks to view detailed information and rationale
+                </CardDescription>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  onClick={() => setCurrentWeek(Math.max(0, currentWeek - 1))}
+                  disabled={currentWeek === 0}
+                  variant="outline"
+                  size="sm"
+                  className="bg-transparent border-green-500/50 text-green-500 hover:bg-green-500 hover:text-black disabled:opacity-50"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-white font-medium">
+                  {formatDate(currentWeekData.start)} - {formatDate(currentWeekData.end)}, 2025
+                </span>
+                <Button
+                  onClick={() => setCurrentWeek(Math.min(weeks.length - 1, currentWeek + 1))}
+                  disabled={currentWeek === weeks.length - 1}
+                  variant="outline"
+                  size="sm"
+                  className="bg-transparent border-green-500/50 text-green-500 hover:bg-green-500 hover:text-black disabled:opacity-50"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-7 gap-2 mb-4">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                <div key={day} className="text-center text-gray-400 font-medium py-2">
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-7 gap-2 min-h-[200px]">
+              {Array.from({ length: 7 }, (_, dayIndex) => {
+                const currentDate = new Date(currentWeekData.start)
+                currentDate.setDate(currentWeekData.start.getDate() + dayIndex)
+
+                const dayTasks = currentWeekData.tasks.filter((task) => {
+                  const taskDate = new Date(task.date_from)
+                  return taskDate.toDateString() === currentDate.toDateString()
+                })
+
+                return (
+                  <div key={dayIndex} className="bg-gray-800 rounded-lg p-2 min-h-[150px]">
+                    <div className="text-center mb-2">
+                      <span className="text-white font-medium">{currentDate.getDate()}</span>
+                    </div>
+                    <div className="space-y-1">
+                      {dayTasks.map((task) => (
+                        <div
+                          key={task.task_id}
+                          onClick={() => setSelectedTask(task)}
+                          className={`p-2 rounded text-xs cursor-pointer hover:opacity-80 transition-opacity ${getCategoryColor(task.category)}`}
+                        >
+                          <div className="flex items-center space-x-1 mb-1">
+                            <div className={`w-2 h-2 rounded-full ${getPriorityColor(task.priority)}`}></div>
+                            <span className="font-medium truncate">{task.task}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Task Details Modal */}
+        {selectedTask && (
+          <Card className="bg-gray-900 border-green-500/20">
+            <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">AI Farm Assistant</CardTitle>
-                <Button variant="ghost" size="icon" onClick={() => setIsChatOpen(false)}>
-                  <X className="h-4 w-4" />
+                <CardTitle className="text-white">Task Details</CardTitle>
+                <Button
+                  onClick={() => setSelectedTask(null)}
+                  variant="ghost"
+                  className="text-gray-400 hover:text-white"
+                >
+                  ×
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="p-0 flex flex-col h-full">
-              <ScrollArea className="flex-1 p-4" ref={chatScrollRef}>
-                <div className="space-y-4">
-                  {chatMessages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                    >
-                      <div
-                        className={`max-w-[80%] p-3 rounded-lg text-sm ${
-                          message.role === "user" ? "bg-green-500 text-white" : "bg-muted text-foreground"
-                        }`}
-                      >
-                        {message.content}
-                      </div>
-                    </div>
-                  ))}
-                  {isLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-muted p-3 rounded-lg">
-                        <div className="flex space-x-1">
-                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
-                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce delay-100" />
-                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce delay-200" />
-                        </div>
-                      </div>
-                    </div>
-                  )}
+            <CardContent className="space-y-4">
+              <div>
+                <h3 className="font-semibold text-white mb-2">{selectedTask.task}</h3>
+                <div className="flex items-center space-x-2 mb-3">
+                  <Badge className={getCategoryColor(selectedTask.category)}>
+                    {selectedTask.category.replace("_", " ")}
+                  </Badge>
+                  <Badge className={`${getPriorityColor(selectedTask.priority)} text-white`}>
+                    {selectedTask.priority} priority
+                  </Badge>
                 </div>
-              </ScrollArea>
-              <div className="p-4 border-t">
-                <div className="flex space-x-2">
-                  <Textarea
-                    placeholder="Ask about your crops..."
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault()
-                        handleSendMessage()
-                      }
-                    }}
-                    className="min-h-[40px] resize-none"
-                    rows={1}
-                  />
-                  <Button onClick={handleSendMessage} disabled={isLoading || !chatInput.trim()}>
-                    <Send className="h-4 w-4" />
-                  </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <span className="text-gray-400 text-sm">Start Date:</span>
+                  <p className="text-white">{new Date(selectedTask.date_from).toLocaleDateString()}</p>
                 </div>
+                <div>
+                  <span className="text-gray-400 text-sm">End Date:</span>
+                  <p className="text-white">{new Date(selectedTask.date_to).toLocaleDateString()}</p>
+                </div>
+              </div>
+              <div>
+                <span className="text-gray-400 text-sm">Rationale:</span>
+                <p className="text-white mt-1">{selectedTask.rationale}</p>
               </div>
             </CardContent>
           </Card>
@@ -400,48 +325,4 @@ export function InteractiveCropCalendar({ calendarData, farmProfile }: Interacti
       </div>
     </div>
   )
-}
-
-// AI Response Generator (mock implementation)
-async function generateAIResponse(question: string, calendarData: CropCalendarData, farmProfile: any): Promise<string> {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-
-  const lowerQuestion = question.toLowerCase()
-
-  // Context-aware responses based on calendar data
-  if (lowerQuestion.includes("water") || lowerQuestion.includes("irrigation")) {
-    return `Based on your farm profile with ${farmProfile?.soil_type || "loamy"} soil at ${
-      farmProfile?.altitude_meters || 1780
-    }m altitude, I recommend checking soil moisture levels every 2-3 days. Your irrigation tasks are scheduled optimally considering Jimma's rainfall patterns. During dry periods, ensure deep watering rather than frequent shallow watering.`
-  }
-
-  if (lowerQuestion.includes("next week") || lowerQuestion.includes("prepare")) {
-    const nextWeekTasks = calendarData.calendar.filter((task) => {
-      const taskDate = new Date(task.date_from)
-      const nextWeek = new Date()
-      nextWeek.setDate(nextWeek.getDate() + 7)
-      return taskDate <= nextWeek && taskDate >= new Date()
-    })
-
-    if (nextWeekTasks.length > 0) {
-      return `For next week, you have ${nextWeekTasks.length} important tasks: ${nextWeekTasks
-        .map((t) => t.task)
-        .join(", ")}. Make sure to prepare your tools and check weather conditions beforehand.`
-    }
-  }
-
-  if (lowerQuestion.includes("why") || lowerQuestion.includes("important")) {
-    return `Each task in your calendar is carefully timed based on 10-year climate data for Jimma, Ethiopia. The AI considers your specific soil type, altitude, and historical yields to optimize timing. Following this schedule can increase your yields by 15-25% compared to traditional methods.`
-  }
-
-  if (lowerQuestion.includes("crop") || lowerQuestion.includes("plant")) {
-    const topCrop = calendarData.top_crops[0]
-    return `Your top recommended crop is ${topCrop.name} with a resilience score of ${Math.round(
-      topCrop.resilience_score * 100,
-    )}%. Expected profit range is ${topCrop.expected_profit_min.toLocaleString()}-${topCrop.expected_profit_max.toLocaleString()} ETB. This crop is well-suited for your farm conditions.`
-  }
-
-  // Default response
-  return `I'm here to help with your farming questions! I can provide advice about your crop calendar, irrigation schedules, soil management, and more. What specific aspect of farming would you like to know about?`
 }

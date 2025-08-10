@@ -1,74 +1,63 @@
 "use client"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Users, Building2, Landmark, Smartphone, ArrowRight, CheckCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Users, FileText, Building, Smartphone, ArrowLeft } from "lucide-react"
+import Image from "next/image"
 
 interface RoleSelectionProps {
   onRoleSelect: (role: "agent" | "ngo" | "government") => void
   onFarmerAccess: () => void
+  onBack?: () => void
 }
 
-const roles = [
-  {
-    id: "agent" as const,
-    title: "Field Agent",
-    description: "Collect data and deliver recommendations directly to farmers",
-    icon: Users,
-    color: "text-green-600",
-    bgColor: "bg-green-100 dark:bg-green-900/20",
-    features: ["Farm data collection", "Crop recommendations", "Verification workflows", "Mobile-first interface"],
-  },
-  {
-    id: "ngo" as const,
-    title: "NGO / FAO",
-    description: "Monitor programs and manage verification at organizational scale",
-    icon: Building2,
-    color: "text-blue-600",
-    bgColor: "bg-blue-100 dark:bg-blue-900/20",
-    features: ["Program monitoring", "Adoption tracking", "Impact measurement", "Multi-agent management"],
-  },
-  {
-    id: "government" as const,
-    title: "Government",
-    description: "Access aggregated insights for agricultural policy development",
-    icon: Landmark,
-    color: "text-purple-600",
-    bgColor: "bg-purple-100 dark:bg-purple-900/20",
-    features: ["Policy insights", "Regional analytics", "Climate adaptation data", "Aggregated reporting"],
-  },
-]
-
-export function RoleSelection({ onRoleSelect, onFarmerAccess }: RoleSelectionProps) {
-  const [selectedRole, setSelectedRole] = useState<"agent" | "ngo" | "government" | null>(null)
-
+export function RoleSelection({ onRoleSelect, onFarmerAccess, onBack }: RoleSelectionProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-agri-50 to-earth-50 dark:from-agri-950 dark:to-earth-950 p-4">
-      <div className="w-full max-w-5xl">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-4">Welcome to IndieCrop</h1>
-          <p className="text-muted-foreground text-lg">Choose your role to get started with personalized features</p>
+    <div className="min-h-screen bg-black">
+      {/* Header */}
+      <header className="border-b bg-black/80 backdrop-blur-md sticky top-0 z-50 border-green-500/20">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            {onBack && (
+              <Button onClick={onBack} variant="ghost" className="text-green-500 hover:text-green-400 mr-2">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            )}
+            <div className="h-8 w-8 relative">
+              <Image src="/images/indiecrop-logo.png" alt="IndieCrop Logo" width={32} height={32} />
+            </div>
+            <div>
+              <h1 className="font-bold text-lg text-white">IndieCrop</h1>
+              <p className="text-sm text-gray-400">Choose your role</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-white mb-4">Welcome to IndieCrop</h1>
+          <p className="text-gray-400 text-lg">Choose your role to get started with personalized features</p>
         </div>
 
-        {/* Farmer Quick Access */}
+        {/* Farmer Access - Responsive */}
         <div className="mb-8">
-          <Card className="bg-dark-accent/10 border-dark-accent/30 hover:border-dark-accent/50 transition-all cursor-pointer">
+          <Card className="bg-green-500/10 border-green-500/30 hover:border-green-500/50 transition-all duration-300">
             <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
                 <div className="flex items-center space-x-4">
-                  <div className="h-12 w-12 rounded-full bg-dark-accent/20 flex items-center justify-center">
-                    <Smartphone className="h-6 w-6 text-dark-accent" />
+                  <div className="h-12 w-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                    <Smartphone className="h-6 w-6 text-green-500" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-dark-text-primary">Are you a Farmer?</h3>
-                    <p className="text-dark-text-secondary">
-                      Direct access for farmers with smartphones - በቀጥታ የገበሬዎች መዳረሻ
-                    </p>
+                  <div className="text-center sm:text-left">
+                    <h3 className="text-xl font-semibold text-white">Are you a Farmer?</h3>
+                    <p className="text-gray-400">Direct access for farmers with smartphones - የገበሬዎች መዳረሻ</p>
                   </div>
                 </div>
-                <Button onClick={onFarmerAccess} className="neon-gradient text-dark-primary">
+                <Button
+                  onClick={onFarmerAccess}
+                  className="bg-green-500 hover:bg-green-600 text-black px-6 py-3 w-full sm:w-auto"
+                >
                   <Smartphone className="mr-2 h-4 w-4" />
                   Farmer Access / የገበሬ መዳረሻ
                 </Button>
@@ -77,47 +66,121 @@ export function RoleSelection({ onRoleSelect, onFarmerAccess }: RoleSelectionPro
           </Card>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {roles.map((role) => (
-            <Card
-              key={role.id}
-              className={`cursor-pointer transition-all hover:shadow-lg ${
-                selectedRole === role.id ? "ring-2 ring-agri-500 shadow-lg" : ""
-              }`}
-              onClick={() => setSelectedRole(role.id)}
-            >
-              <CardHeader className="text-center">
-                <div className={`mx-auto h-16 w-16 rounded-full ${role.bgColor} flex items-center justify-center mb-4`}>
-                  <role.icon className={`h-8 w-8 ${role.color}`} />
+        {/* Role Selection Cards */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Field Agent */}
+          <Card className="bg-gray-900 border-green-500/20 hover:border-green-500/50 transition-all duration-300 cursor-pointer group">
+            <CardHeader className="text-center">
+              <div className="h-16 w-16 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-green-500/30 transition-colors">
+                <Users className="h-8 w-8 text-green-500" />
+              </div>
+              <CardTitle className="text-white text-xl">Field Agent</CardTitle>
+              <CardDescription className="text-gray-400">
+                Collect data and deliver recommendations directly to farmers
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Farm data collection</span>
                 </div>
-                <CardTitle className="text-xl">{role.title}</CardTitle>
-                <CardDescription className="text-base">{role.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {role.features.map((feature, index) => (
-                    <div key={index} className="flex items-center space-x-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-agri-500 flex-shrink-0" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Crop recommendations</span>
                 </div>
-                {selectedRole === role.id && <Badge className="w-full justify-center mt-4 bg-agri-500">Selected</Badge>}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Verification workflows</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Mobile-first interface</span>
+                </div>
+              </div>
+              <Button
+                onClick={() => onRoleSelect("agent")}
+                className="w-full bg-green-500 hover:bg-green-600 text-black"
+              >
+                Continue as Field Agent
+              </Button>
+            </CardContent>
+          </Card>
 
-        <div className="text-center">
-          <Button
-            onClick={() => selectedRole && onRoleSelect(selectedRole)}
-            disabled={!selectedRole}
-            size="lg"
-            className="px-8"
-          >
-            Continue as {selectedRole && roles.find((r) => r.id === selectedRole)?.title}
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+          {/* NGO/FAO */}
+          <Card className="bg-gray-900 border-green-500/20 hover:border-green-500/50 transition-all duration-300 cursor-pointer group">
+            <CardHeader className="text-center">
+              <div className="h-16 w-16 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-green-500/30 transition-colors">
+                <FileText className="h-8 w-8 text-green-500" />
+              </div>
+              <CardTitle className="text-white text-xl">NGO / FAO</CardTitle>
+              <CardDescription className="text-gray-400">
+                Monitor programs and manage verification at organizational scale
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Program monitoring</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Adoption tracking</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Impact measurement</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Multi-agent management</span>
+                </div>
+              </div>
+              <Button onClick={() => onRoleSelect("ngo")} className="w-full bg-green-500 hover:bg-green-600 text-black">
+                Continue as NGO/FAO
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Government */}
+          <Card className="bg-gray-900 border-green-500/20 hover:border-green-500/50 transition-all duration-300 cursor-pointer group">
+            <CardHeader className="text-center">
+              <div className="h-16 w-16 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-green-500/30 transition-colors">
+                <Building className="h-8 w-8 text-green-500" />
+              </div>
+              <CardTitle className="text-white text-xl">Government</CardTitle>
+              <CardDescription className="text-gray-400">
+                Access aggregated insights for agricultural policy development
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Policy insights</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Regional analytics</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Climate adaptation data</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Aggregated reporting</span>
+                </div>
+              </div>
+              <Button
+                onClick={() => onRoleSelect("government")}
+                className="w-full bg-green-500 hover:bg-green-600 text-black"
+              >
+                Continue as Government
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
