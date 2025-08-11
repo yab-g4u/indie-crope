@@ -3,7 +3,7 @@
 
 ---
 
-## 📖 Overview  
+## 📖 Overview   
 IndieCrop is a **multi-role Progressive Web App** that transforms Ethiopian agriculture through:  
 - **AI-powered crop recommendations**  
 - **Blockchain-backed farm verification**  
